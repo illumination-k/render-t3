@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
-import { createRouter } from "@/server/createRouter";
+import { createProtectedRouter } from "@/server/createRouter";
 import { prisma } from "@/server/prisma";
 import { DocumentModel } from "@/zod";
 import { z } from "zod";
@@ -17,7 +17,7 @@ const defaultDocumentSelect = Prisma.validator<Prisma.DocumentSelect>()({
   content: true,
 });
 
-export const documentRouter = createRouter()
+export const documentRouter = createProtectedRouter()
   .mutation("add", {
     input: DocumentModel,
     async resolve({ input }) {
