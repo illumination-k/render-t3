@@ -1,7 +1,6 @@
-import { nextAuthOptions } from "@/libs/auth";
+import { nextAuthOptions, unstable_getServerUserSession } from "@/libs/auth";
 import * as trpc from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { unstable_getServerSession } from "next-auth";
 import { Context } from "./context";
 
 /**
@@ -14,13 +13,23 @@ export function createRouter() {
 export function createProtectedRouter() {
   return trpc.router<Context>().middleware(async ({ ctx, next }) => {
     const { req, res } = ctx;
+    console.log(req.query);
 
-    const session = await unstable_getServerSession(req, res, nextAuthOptions);
+    const session = await unstable_getServerUserSession(req, res, nextAuthOptions);
 
     if (!session) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    return next();
+    if (!session.userId) {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: "User ID dose not set in session" });
+    }
+
+    console.log(req.body);
+    delete req.query.batch;
+
+    return next({
+      ctx: { ...ctx, session: session },
+    });
   });
 }

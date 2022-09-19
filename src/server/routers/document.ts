@@ -19,19 +19,26 @@ const defaultDocumentSelect = Prisma.validator<Prisma.DocumentSelect>()({
 
 export const documentRouter = createProtectedRouter()
   .mutation("add", {
-    input: DocumentModel,
-    async resolve({ input }) {
-      const document = await prisma.document.create({
-        data: input,
-        select: defaultDocumentSelect,
+    input: z.object({
+      title: z.string(),
+      content: z.string().nullish(),
+    }),
+    async resolve({ input, ctx }) {
+      // console.log(ctx);
+      const doc = await prisma.document.create({
+        data: {
+          title: input.title,
+          content: input.content,
+          userId: ctx.session.userId,
+        },
       });
-
-      return document;
+      return doc;
     },
   })
-  .query("all", {
-    async resolve() {
+  .query("list", {
+    async resolve({ ctx }) {
       return prisma.document.findMany({
+        where: { userId: ctx.session.userId },
         select: defaultDocumentSelect,
       });
     },

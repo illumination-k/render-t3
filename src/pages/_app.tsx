@@ -1,7 +1,10 @@
 import "../styles/globals.css";
+import type { AppRouter } from "@/server/routers";
+import { withTRPC } from "@trpc/next";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
+import superjson from "superjson";
 
 interface SessionAppProps extends AppProps {
   pageProps: {

@@ -1,7 +1,4 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
@@ -14,7 +11,7 @@ function Button() {
   if (session) {
     return (
       <>
-        Signed in as {session.user?.email} <br />
+        Signed in as {JSON.stringify(session)} <br />
         <button onClick={() => signOut()}>Sign out</button>
       </>
     );
@@ -29,7 +26,7 @@ function Button() {
 
 const Home: NextPage = () => {
   return (
-    <div className={styles.container}>
+    <div>
       <Button />
     </div>
   );

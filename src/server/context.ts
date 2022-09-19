@@ -1,8 +1,10 @@
+import { UserSession } from "@/libs/auth";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
+import { Session } from "next-auth";
 
 interface CreateContextOptions extends trpcNext.CreateNextContextOptions {
-  // session: Session | null
+  session: UserSession | null;
 }
 
 /**
@@ -24,5 +26,5 @@ export async function createContext(
 ): Promise<Context> {
   // for API-response caching see https://trpc.io/docs/caching
 
-  return await createContextInner(opts);
+  return await createContextInner({ ...opts, session: null });
 }
